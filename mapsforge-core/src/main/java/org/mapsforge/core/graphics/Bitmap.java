@@ -37,4 +37,6 @@ public interface Bitmap {
 	void scaleTo(int width, int height);
 
 	void setBackgroundColor(int color);
+
+	void setPixels(int[] pixels, int tileSize);
 }

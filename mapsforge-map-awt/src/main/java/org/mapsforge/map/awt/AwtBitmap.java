@@ -88,4 +88,10 @@ class AwtBitmap implements Bitmap {
 		graphics.dispose();
 	}
 
+	@Override
+	public void setPixels(int[] pixels, int tileSize) {
+		// TODO implement
+
+	}
+
 }

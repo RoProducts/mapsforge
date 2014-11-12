@@ -51,9 +51,11 @@ public final class AndroidUtil {
 	 * @param id             name for the directory
 	 * @param firstLevelSize size of the first level cache
 	 * @param tileSize       tile size
+	 * @param initialDelete  flag to indicate that the Filesystemcache should be deleted on start to avoid to use old tiles
 	 * @return a new cache created on the external storage
 	 */
-	public static TileCache createExternalStorageTileCache(Context c, String id, int firstLevelSize, int tileSize, boolean threaded, int queueSize) {
+	public static TileCache createExternalStorageTileCache(Context c, String id, int firstLevelSize, int tileSize,
+			boolean threaded, int queueSize, boolean initialDelete) {
 		Log.d("TILECACHE INMEMORY SIZE", Integer.toString(firstLevelSize));
 		TileCache firstLevelTileCache = new InMemoryTileCache(firstLevelSize);
 		File cacheDir = c.getExternalCacheDir();
@@ -69,6 +71,9 @@ public final class AndroidUtil {
 
 						TileCache secondLevelTileCache = new FileSystemTileCache(tileCacheFiles, cacheDirectory,
 								org.mapsforge.map.android.graphics.AndroidGraphicFactory.INSTANCE, threaded, queueSize);
+						if (initialDelete) {
+							((FileSystemTileCache) secondLevelTileCache).clear();
+						}
 						return new TwoLevelTileCache(firstLevelTileCache, secondLevelTileCache);
 					} catch (IllegalArgumentException e) {
 						Log.w("TILECACHE", e.toString());
@@ -90,12 +95,14 @@ public final class AndroidUtil {
 	 * @param overdraw    overdraw allowance
 	 * @param threaded    if a background thread is employed to store tile data
 	 * @param queueSize   maximum length of queue before the put operation blocks
+	 * @param initialDelete  flag to indicate that the Filesystemcache should be deleted on start to avoid to use old tiles
 	 * @return a new cache created on the external storage
 	 */
 
-	public static TileCache createTileCache(Context c, String id, int tileSize, float screenRatio, double overdraw, boolean threaded, int queueSize) {
+	public static TileCache createTileCache(Context c, String id, int tileSize, float screenRatio, double overdraw,
+			boolean threaded, int queueSize, boolean initialDelete) {
 		int cacheSize = Math.round(getMinimumCacheSize(c, tileSize, overdraw, screenRatio));
-		return createExternalStorageTileCache(c, id, cacheSize, tileSize, threaded, queueSize);
+		return createExternalStorageTileCache(c, id, cacheSize, tileSize, threaded, queueSize, initialDelete);
 	}
 
 	/**
@@ -108,11 +115,13 @@ public final class AndroidUtil {
 	 * @param tileSize    tile size
 	 * @param screenRatio part of the screen the view takes up
 	 * @param overdraw    overdraw allowance
+	 * @param initialDelete  flag to indicate that the Filesystemcache should be deleted on start to avoid to use old tiles
 	 * @return a new cache created on the external storage
 	 */
 
-	public static TileCache createTileCache(Context c, String id, int tileSize, float screenRatio, double overdraw) {
-		return createTileCache(c, id, tileSize, screenRatio, overdraw, false, 0);
+	public static TileCache createTileCache(Context c, String id, int tileSize, float screenRatio, double overdraw,
+			boolean initialDelete) {
+		return createTileCache(c, id, tileSize, screenRatio, overdraw, false, 0, initialDelete);
 	}
 
 	/**

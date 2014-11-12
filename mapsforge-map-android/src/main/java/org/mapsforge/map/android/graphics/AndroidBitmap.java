@@ -217,4 +217,11 @@ public class AndroidBitmap implements Bitmap {
 		return result;
 	}
 
+	@Override
+	public void setPixels(int[] pixels, int tileSize) {
+
+		this.bitmap.setPixels(pixels, 0, tileSize, 0, 0, tileSize, tileSize);
+
+	}
+
 }

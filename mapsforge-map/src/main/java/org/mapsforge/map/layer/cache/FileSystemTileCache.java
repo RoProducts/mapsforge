@@ -196,6 +196,17 @@ public class FileSystemTileCache extends PausableThread implements TileCache {
 		deleteDirectory(this.cacheDirectory);
 	}
 
+	public synchronized void clear() {
+		File[] filesToDelete = this.cacheDirectory.listFiles(ImageFileNameFilter.INSTANCE);
+		if (filesToDelete != null) {
+			for (File file : filesToDelete) {
+				if (file.exists() && !file.delete()) {
+					LOGGER.log(Level.SEVERE, "could not delete file: " + file);
+				}
+			}
+		}
+	}
+
 	@Override
 	public TileBitmap get(Job key) {
 
